@@ -85,6 +85,18 @@ describe('Vehicles Tests', () => {
     expect(res.statusCode).toBe(400);
   });
 
+  it('Deletes vehicle', async () => {
+    const res = await request(app).delete(`/vehicle/delete/${vehicleID}`)
+
+    expect(res.statusCode).toBe(200);
+  });
+
+  it('Receives error on deleting vehicle', async () => {
+    const res = await request(app).delete('/vehicle/delete/123')
+
+    expect(res.statusCode).toBe(400);
+  });
+
 });
 
 

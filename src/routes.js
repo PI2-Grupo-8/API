@@ -14,5 +14,6 @@ routes.get('/vehicles', VehicleController.getAllVehicles);
 routes.get('/vehicle/:id', VehicleController.getOneVehicle);
 routes.post('/vehicle/create', VehicleController.createVehicle);
 routes.put('/vehicle/update/:id', VehicleController.updateVehicle);
+routes.delete('/vehicle/delete/:id', VehicleController.deleteVehicle);
 
 module.exports = routes;
