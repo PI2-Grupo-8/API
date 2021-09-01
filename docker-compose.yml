@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  api:
-    container_name: strongberry-api
+  strongberry_api:
+    container_name: strongberry_api
     build: .
     ports:
       - 3001:3001
@@ -13,10 +13,10 @@ services:
       - ./:/code
       - node_modules:/code/node_modules
     depends_on:
-      - db
+      - strongberry_db
 
-  db:
-    container_name: strongberry-db
+  strongberry_db:
+    container_name: strongberry_db
     image: mongo:4.4
     restart: always
     environment:
@@ -25,7 +25,7 @@ services:
       MONGO_INITDB_DATABASE: root-db
     env_file: .env
     volumes:
-      - ./db/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
+      - ./db/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
       - ./db/.dbshell:/home/mongodb/.dbshell
       - mongodb:/data/db
 
