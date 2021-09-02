@@ -1,16 +1,16 @@
 const request = require('supertest');
 const app = require('../src/index');
 const {
-  connectTestDB,
-  removeAllCollections
-} = require('./dbTestEnv')
+  connectDB,
+  eraseDB
+} = require('../src/db')
 
 beforeAll(async () => {
-  db = await connectTestDB();
+  db = await connectDB();
 });
 
 afterEach(async () => {
-  await removeAllCollections(db);
+  await eraseDB(db);
 });
 
 describe('Vehicles Tests', () => {
