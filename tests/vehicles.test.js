@@ -5,6 +5,8 @@ const {
   eraseDB
 } = require('../src/db')
 
+let db;
+
 beforeAll(async () => {
   db = await connectDB();
 });

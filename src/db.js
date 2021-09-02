@@ -13,7 +13,7 @@ const connectDB = async () => {
   const db_name = NODE_ENV === 'test' ? DB_TEST : DB_DEV;
   const url = `mongodb://${DB_USER}:${DB_PASS}@${DB_HOST}/${db_name}`;
 
-  db = await mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+  const db = await mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 
   return db
 }
