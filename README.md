@@ -13,5 +13,5 @@ docker-compose up
 Para testar a aplicação rode o comando abaixo:
 
 ```
-docker-compose run --rm -e NODE_ENV=test strongberry_api bash -c  "yarn && yarn jest --coverage --forceExit"
+docker-compose run --rm -e NODE_ENV=test vehicle_api bash -c  "yarn && yarn jest --coverage --forceExit"
 ```
