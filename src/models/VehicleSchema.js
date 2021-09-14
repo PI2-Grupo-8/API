@@ -3,28 +3,29 @@ const mongoose = require('mongoose');
 const vehicleSchema = new mongoose.Schema({
   owner: {
     type: String,
-    require: [true],
+    require: true,
   },
   code: {
     type: String,
-    require: [true]
+    require: true,
+    unique: true
   },
   name: {
     type: String,
-    require: [true]
+    require: true
   },
   description: {
     type: String,
-    require: [false]
+    require: true
   },
-  createdAt: {
-    type: Date,
-    require: [true],
+  fertilizer: {
+    type: String,
+    require: true
   },
-  updatedAt: {
-    type: Date,
-    require: [true],
-  },
+  fertilizerAmount: {
+    type: Number,
+    require: true
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Vehicle', vehicleSchema);
