@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  strongberry_api:
-    container_name: strongberry_api
+  vehicle_api:
+    container_name: vehicle_api
     build: .
     ports:
       - 3001:3001
@@ -13,10 +13,10 @@ services:
       - ./:/code
       - node_modules:/code/node_modules
     depends_on:
-      - strongberry_db
+      - vehicle_db
 
-  strongberry_db:
-    container_name: strongberry_db
+  vehicle_db:
+    container_name: vehicle_db
     image: mongo:4.4
     restart: always
     environment:
