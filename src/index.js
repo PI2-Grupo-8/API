@@ -1,21 +1,13 @@
 const express = require('express');
-const mongoose = require('mongoose');
 
 const routes = require('./routes');
+const { connectDB } = require('./db')
 
-const {
-  DB_USER,
-  DB_PASS,
-  DB_NAME,
-  DB_HOST,
-  PORT,
-} = process.env;
+const { PORT, NODE_ENV } = process.env;
 
-const url = `mongodb://${DB_USER}:${DB_PASS}@${DB_HOST}/${DB_NAME}`;
-
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+connectDB()
   .then(() => {
-    console.log('MongoDB is connected');
+    console.log(`MongoDB is connected on ${NODE_ENV}`);
   })
   .catch((err) => {
     console.log('Error on connecting to MongoDB', err);
