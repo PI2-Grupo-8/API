@@ -342,9 +342,6 @@ describe('Vehicles Tests', () => {
       ]);
     })
   })
-
-
-
 });
 
 
