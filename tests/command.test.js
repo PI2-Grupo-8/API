@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../src/index');
+const app = require('../src/app');
 const { COMMAND_TYPES } = require('../src/utils/commandTypes');
 const {
     connectDB,
