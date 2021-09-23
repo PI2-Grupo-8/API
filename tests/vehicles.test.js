@@ -40,6 +40,7 @@ describe('Vehicles Tests', () => {
 
   beforeEach(async () => {
     const res = await request(app).post('/vehicle/create').send(vehicle);
+    
     vehicleID = res.body._id;
     createdVehicle = res.body
   })
