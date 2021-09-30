@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../src/index');
+const app = require('../src/app');
 const {
   connectDB,
   eraseDB
@@ -40,6 +40,7 @@ describe('Vehicles Tests', () => {
 
   beforeEach(async () => {
     const res = await request(app).post('/vehicle/create').send(vehicle);
+    
     vehicleID = res.body._id;
     createdVehicle = res.body
   })
