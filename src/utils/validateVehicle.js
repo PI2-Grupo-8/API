@@ -71,5 +71,7 @@ const catchRepeatedValueError = (error) => {
 
 module.exports = {
   validateVehicleData,
-  catchRepeatedValueError
+  catchRepeatedValueError,
+  notBlank,
+  isValidObjectId
 }

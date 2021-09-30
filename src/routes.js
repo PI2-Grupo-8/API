@@ -3,6 +3,7 @@ const express = require('express');
 const routes = express.Router();
 
 const VehicleController = require('./controllers/VehicleController');
+const CommandController = require('./controllers/CommandController');
 
 const { NODE_ENV } = process.env;
 
@@ -15,5 +16,8 @@ routes.get('/vehicle/:id', VehicleController.getOneVehicle);
 routes.post('/vehicle/create', VehicleController.createVehicle);
 routes.put('/vehicle/update/:id', VehicleController.updateVehicle);
 routes.delete('/vehicle/delete/:id', VehicleController.deleteVehicle);
+routes.get('/commands', CommandController.getAllCommands);
+routes.get('/command/:id', CommandController.getCommandsByVehicle);
+routes.post('/command/create', CommandController.createCommand);
 
 module.exports = routes;
