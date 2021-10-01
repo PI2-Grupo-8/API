@@ -17,6 +17,19 @@ const getAllVehicles = async (req, res) => {
   }
 };
 
+const getVehiclesByOwner = async (req, res) => {
+  const { owner } = req.params;
+  try {
+    const vehicles = await Vehicle.find({ owner });
+    return res.json(vehicles);
+  } catch (err) {
+    return res.status(400).json({
+      message: "Could not get vehicle list",
+      error: err
+    });
+  }
+};
+
 const getOneVehicle = async (req, res) => {
   const { id } = req.params;
   try {
@@ -83,6 +96,7 @@ const deleteVehicle = async (req, res) => {
 
 module.exports = {
   getAllVehicles,
+  getVehiclesByOwner,
   getOneVehicle,
   createVehicle,
   updateVehicle,
