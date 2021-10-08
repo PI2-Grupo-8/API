@@ -1,5 +1,5 @@
 const ValidationError = require('../utils/validationError')
-const { notBlank, isValidObjectId } = require("./validateVehicle");
+const { notBlank, isValidObjectId } = require("./basicValidation");
 const { COMMAND_TYPES } = require('../utils/commandTypes');
 
 const validateCommandData = (req_body) => {
@@ -12,7 +12,7 @@ const validateCommandData = (req_body) => {
 
     errors.push(!isValidObjectId(vehicleId) ? "Vehicle id is invalid" : null);
     errors.push(COMMAND_TYPES.includes(type)? null : "Command is not valid");
-    
+
     errors = errors.filter( error => error);
 
     if (errors.length > 0) {
