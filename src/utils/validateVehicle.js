@@ -1,26 +1,10 @@
-const ValidationError = require('../utils/validationError')
-const ObjectId = require('mongoose').Types.ObjectId;
+const ValidationError = require('./validationError')
+const {
+  notBlank,
+  isValidObjectId,
+  removeUndefinedValues
+} = require('./basicValidation')
 
-function isValidObjectId(id) {
-  if (ObjectId.isValid(id)) {
-    if ((String)(new ObjectId(id)) === id)
-      return true;
-    return false;
-  }
-  return false;
-}
-
-const removeUndefinedValues = (arr) => {
-  return arr.filter((element) => {
-    return element !== undefined;
-  });
-}
-
-const notBlank = (item, label) => {
-  if (!item) {
-    return `${label} must not be blank`
-  }
-}
 
 const fertilizerAmountValidation = (amount) => {
   if (amount && isNaN(amount)) {
@@ -42,7 +26,6 @@ const ownerValidation = (owner) => {
 }
 
 const validateVehicleData = (req_body) => {
-
   const { owner, code, fertilizerAmount } = req_body;
   errors = []
 
@@ -71,7 +54,5 @@ const catchRepeatedValueError = (error) => {
 
 module.exports = {
   validateVehicleData,
-  catchRepeatedValueError,
-  notBlank,
-  isValidObjectId
+  catchRepeatedValueError
 }
