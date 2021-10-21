@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../src/index');
+const app = require('../src/app');
 const {
   connectDB,
   eraseDB
@@ -17,20 +17,13 @@ afterEach(async () => {
   await eraseDB(db);
 });
 
-describe('Main API Test', () => {
-  it('Root route', async () => {
-    const res = await request(app).get('/')
-    expect(res.statusCode).toBe(200);
-    expect(res.body.message).toBe(`API is running on ${NODE_ENV}`);
-  })
-});
-
 describe('Vehicles Tests', () => {
   let vehicleID;
   let createdVehicle;
+  let ownerID = "61411790de1c603fc8596ea9"
 
   let vehicle = {
-    owner: "61411790de1c603fc8596ea9",
+    owner: ownerID,
     code: "JKR3",
     name: "Veiculo da Horta",
     description: "Veiculo para a fertilização da horta",
@@ -40,6 +33,7 @@ describe('Vehicles Tests', () => {
 
   beforeEach(async () => {
     const res = await request(app).post('/vehicle/create').send(vehicle);
+
     vehicleID = res.body._id;
     createdVehicle = res.body
   })
@@ -84,6 +78,13 @@ describe('Vehicles Tests', () => {
 
   it('Gets vehicles list', async () => {
     const res = await request(app).get('/vehicles/')
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual(expect.arrayContaining([createdVehicle]));
+  });
+
+  it('Gets vehicles list by owner', async () => {
+    const res = await request(app).get(`/vehicles/owner/${ownerID}`)
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual(expect.arrayContaining([createdVehicle]));
