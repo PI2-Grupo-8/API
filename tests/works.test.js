@@ -1,9 +1,12 @@
 const request = require('supertest');
 const app = require('../src/app');
+const jwt = require('jsonwebtoken');
 const {
   connectDB,
   eraseDB
 } = require('../src/db')
+
+const { SECRET } = process.env
 
 let db;
 
@@ -31,63 +34,92 @@ describe('Works Test', () => {
     fertilizerAmount: 3
   }
 
+  const token = jwt.sign({
+    _id: '6170e1900c5f53f7116322b0',
+    name: 'user',
+    email: 'user@email.com',
+    password: '123'
+  }, SECRET, {
+    expiresIn: 240,
+  });
+
   beforeEach(async () => {
-    const res = await request(app).post('/vehicle/create').send(vehicle);
+    const res = await request(app).post('/vehicle/create').send(vehicle)
+      .set('authorization', `JWT ${token}`);
     vehicleId = res.body._id;
 
-    await request(app).get(`/work/create/${vehicleId}`);
-    const res2 = await request(app).get(`/work/finish/${vehicleId}`);
+    await request(app).get(`/work/create/${vehicleId}`)
+      .set('authorization', `JWT ${token}`);
+    const res2 = await request(app).get(`/work/finish/${vehicleId}`)
+      .set('authorization', `JWT ${token}`);
     finishedWork = res2.body;
 
-    const res3 = await request(app).get(`/work/create/${vehicleId}`);
+    const res3 = await request(app).get(`/work/create/${vehicleId}`)
+      .set('authorization', `JWT ${token}`);
     openedWork = res3.body;
 
   });
 
   it('Creates new work', async () => {
-    const res = await request(app).get(`/work/create/${otherVehicleId}`);
+    const res = await request(app).get(`/work/create/${otherVehicleId}`)
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(200);
     expect(res.body.vehicleId).toBe(otherVehicleId);
   });
 
   it('Gives error on creating new work with invalid vehicle', async () => {
-    const res = await request(app).get('/work/create/123');
+    const res = await request(app).get('/work/create/123')
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(400);
     expect(res.body.message).toBe('Could not create work');
   });
 
   it('Gives error on creating new work with working vehicle', async () => {
-    const res = await request(app).get(`/work/create/${vehicleId}`);
+    const res = await request(app).get(`/work/create/${vehicleId}`)
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(400);
     expect(res.body.message).toBe('Could not create work');
   });
 
   it('Finish work', async () => {
-    const res = await request(app).get(`/work/finish/${vehicleId}`);
+    const res = await request(app).get(`/work/finish/${vehicleId}`)
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(200);
     expect(res.body.vehicleId).toBe(vehicleId);
   });
 
   it('Gives error on finishing new work with invalid vehicle', async () => {
-    const res = await request(app).get('/work/finish/123');
+    const res = await request(app).get('/work/finish/123')
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(400);
     expect(res.body.message).toBe('Could not finish work');
   });
 
   it('Lists vehicles current works', async () => {
-    const res = await request(app).get(`/works/${vehicleId}`);
+    const res = await request(app).get(`/works/${vehicleId}`)
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(200);
     expect(res.body).toStrictEqual(expect.arrayContaining([openedWork]));
   });
 
   it('Lists vehicles finished works', async () => {
-    const res = await request(app).get(`/works/${vehicleId}?status=finished`);
+    const res = await request(app).get(`/works/${vehicleId}?status=finished`)
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(200);
     expect(res.body).toStrictEqual(expect.arrayContaining([finishedWork]));
   });
 
   it('Lists vehicles works', async () => {
-    const res = await request(app).get(`/works/${vehicleId}?status=all`);
+    const res = await request(app).get(`/works/${vehicleId}?status=all`)
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(200);
     expect(res.body).toStrictEqual(expect.arrayContaining([openedWork, finishedWork]));
   });

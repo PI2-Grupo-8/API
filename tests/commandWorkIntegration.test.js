@@ -1,10 +1,13 @@
 const request = require('supertest');
 const app = require('../src/app');
+const jwt = require('jsonwebtoken');
 const {
   connectDB,
   eraseDB
 } = require('../src/db')
 const { START_WORK, STOP_WORK } = require('../src/utils/commandTypes');
+
+const { SECRET } = process.env
 
 let db;
 
@@ -29,8 +32,18 @@ describe('Command Work Integration Test', () => {
     fertilizerAmount: 3
   }
 
+  const token = jwt.sign({
+    _id: '6170e1900c5f53f7116322b0',
+    name: 'user',
+    email: 'user@email.com',
+    password: '123'
+  }, SECRET, {
+    expiresIn: 240,
+  });
+
   beforeEach(async () => {
-    const res = await request(app).post('/vehicle/create').send(vehicle);
+    const res = await request(app).post('/vehicle/create').send(vehicle)
+      .set('authorization', `JWT ${token}`);
     vehicleId = res.body._id;
   });
 
@@ -39,8 +52,11 @@ describe('Command Work Integration Test', () => {
       vehicleId,
       type: START_WORK
     }
-    await request(app).post('/command/create').send(command);
-    const res = await request(app).get(`/works/${vehicleId}`);
+    await request(app).post('/command/create').send(command)
+      .set('authorization', `JWT ${token}`);
+    const res = await request(app).get(`/works/${vehicleId}`)
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(200);
     expect(res.body.length).toBe(1);
   });
@@ -52,7 +68,9 @@ describe('Command Work Integration Test', () => {
     }
     await request(app).get(`/work/create/${vehicleId}`);
     await request(app).post('/command/create').send(command);
-    const res = await request(app).get(`/works/${vehicleId}`);
+    const res = await request(app).get(`/works/${vehicleId}`)
+      .set('authorization', `JWT ${token}`);
+
     expect(res.statusCode).toBe(200);
     expect(res.body.length).toBe(0);
   });
