@@ -1,11 +1,12 @@
 const request = require('supertest');
 const app = require('../src/app');
+const jwt = require('jsonwebtoken');
 const {
   connectDB,
   eraseDB
 } = require('../src/db')
 
-const { NODE_ENV } = process.env;
+const { SECRET } = process.env
 
 let db;
 
@@ -31,8 +32,18 @@ describe('Vehicles Tests', () => {
     fertilizerAmount: 3
   }
 
+  const token = jwt.sign({
+    _id: '6170e1900c5f53f7116322b0',
+    name: 'user',
+    email: 'user@email.com',
+    password: '123'
+  }, SECRET, {
+    expiresIn: 240,
+  });
+
   beforeEach(async () => {
-    const res = await request(app).post('/vehicle/create').send(vehicle);
+    const res = await request(app).post('/vehicle/create').send(vehicle)
+      .set('authorization', `JWT ${token}`);
 
     vehicleID = res.body._id;
     createdVehicle = res.body
@@ -47,7 +58,8 @@ describe('Vehicles Tests', () => {
       fertilizer: "Fertilizante",
       fertilizerAmount: 1
     }
-    const res = await request(app).post('/vehicle/create').send(vehicle);
+    const res = await request(app).post('/vehicle/create').send(vehicle)
+      .set('authorization', `JWT ${token}`);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.owner).toBe(vehicle.owner);
@@ -60,6 +72,7 @@ describe('Vehicles Tests', () => {
 
   it('Finds a vehicle by ID', async () => {
     const res = await request(app).get(`/vehicle/${vehicleID}`)
+      .set('authorization', `JWT ${token}`);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.owner).toBe(vehicle.owner);
@@ -72,12 +85,14 @@ describe('Vehicles Tests', () => {
 
   it('Receives error on finding vehicle', async () => {
     const res = await request(app).get('/vehicle/123')
+      .set('authorization', `JWT ${token}`);
 
     expect(res.statusCode).toBe(400);
   });
 
   it('Gets vehicles list', async () => {
     const res = await request(app).get('/vehicles/')
+      .set('authorization', `JWT ${token}`);
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual(expect.arrayContaining([createdVehicle]));
@@ -85,6 +100,7 @@ describe('Vehicles Tests', () => {
 
   it('Gets vehicles list by owner', async () => {
     const res = await request(app).get(`/vehicles/owner/${ownerID}`)
+      .set('authorization', `JWT ${token}`);
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual(expect.arrayContaining([createdVehicle]));
@@ -99,7 +115,8 @@ describe('Vehicles Tests', () => {
       fertilizer: "Fertilizante X",
       fertilizerAmount: 2
     }
-    const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(updateVehicle);
+    const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(updateVehicle)
+      .set('authorization', `JWT ${token}`);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.owner).toBe(updateVehicle.owner);
@@ -112,18 +129,21 @@ describe('Vehicles Tests', () => {
 
   it('Receives error on updating vehicle', async () => {
     const res = await request(app).put('/vehicle/update/123').send(vehicle)
+      .set('authorization', `JWT ${token}`);
 
     expect(res.statusCode).toBe(400);
   });
 
   it('Deletes vehicle', async () => {
     const res = await request(app).delete(`/vehicle/delete/${vehicleID}`)
+      .set('authorization', `JWT ${token}`);
 
     expect(res.statusCode).toBe(200);
   });
 
   it('Receives error on deleting vehicle', async () => {
     const res = await request(app).delete('/vehicle/delete/123')
+      .set('authorization', `JWT ${token}`);
 
     expect(res.statusCode).toBe(400);
   });
@@ -138,7 +158,8 @@ describe('Vehicles Tests', () => {
         fertilizer: null,
         fertilizerAmount: null
       }
-      const res = await request(app).post('/vehicle/create').send(errorVehicle);
+      const res = await request(app).post('/vehicle/create').send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not create vehicle');
@@ -162,7 +183,8 @@ describe('Vehicles Tests', () => {
         fertilizer: "Fertilizante de morangos",
         fertilizerAmount: 3
       }
-      const res = await request(app).post('/vehicle/create').send(errorVehicle);
+      const res = await request(app).post('/vehicle/create').send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not create vehicle');
@@ -181,7 +203,8 @@ describe('Vehicles Tests', () => {
         fertilizer: "Fertilizante de morangos",
         fertilizerAmount: 'a'
       }
-      const res = await request(app).post('/vehicle/create').send(errorVehicle);
+      const res = await request(app).post('/vehicle/create').send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not create vehicle');
@@ -200,7 +223,8 @@ describe('Vehicles Tests', () => {
         fertilizer: "Fertilizante de morangos",
         fertilizerAmount: 1
       }
-      const res = await request(app).post('/vehicle/create').send(errorVehicle);
+      const res = await request(app).post('/vehicle/create').send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not create vehicle');
@@ -219,7 +243,8 @@ describe('Vehicles Tests', () => {
         fertilizer: "Fertilizante de morangos",
         fertilizerAmount: 3
       }
-      const res = await request(app).post('/vehicle/create').send(errorVehicle);
+      const res = await request(app).post('/vehicle/create').send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not create vehicle');
@@ -242,7 +267,8 @@ describe('Vehicles Tests', () => {
         fertilizerAmount: null
       }
 
-      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle);
+      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not update vehicle');
@@ -266,7 +292,8 @@ describe('Vehicles Tests', () => {
         fertilizer: "Fertilizante de morangos",
         fertilizerAmount: 3
       }
-      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle);
+      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not update vehicle');
@@ -285,7 +312,8 @@ describe('Vehicles Tests', () => {
         fertilizer: "Fertilizante de morangos",
         fertilizerAmount: 'a'
       }
-      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle);
+      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not update vehicle');
@@ -304,7 +332,8 @@ describe('Vehicles Tests', () => {
         fertilizer: "Fertilizante de morangos",
         fertilizerAmount: 1
       }
-      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle);
+      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not update vehicle');
@@ -331,9 +360,11 @@ describe('Vehicles Tests', () => {
         fertilizer: "Fertilizante de morangos",
         fertilizerAmount: 3
       }
-      await request(app).post('/vehicle/create').send(originalCodeVehicle);
+      await request(app).post('/vehicle/create').send(originalCodeVehicle)
+        .set('authorization', `JWT ${token}`);
 
-      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle);
+      const res = await request(app).put(`/vehicle/update/${vehicleID}`).send(errorVehicle)
+        .set('authorization', `JWT ${token}`);
 
       expect(res.statusCode).toBe(400);
       expect(res.body.message).toBe('Could not update vehicle');

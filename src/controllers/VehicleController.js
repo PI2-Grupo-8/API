@@ -80,6 +80,29 @@ const updateVehicle = async (req, res) => {
   }
 };
 
+const setIpAddress = async (req, res) => {
+  const { ipAddress } = req.body;
+  const { code } = req.params; 
+
+  try{
+    const vehicle = await Vehicle.findOneAndUpdate({ code }, {
+      ipAddress
+    }, { new: true })
+    delete vehicle.updatedAt
+    delete vehicle.createdAt
+    console.log(vehicle)
+    return res.json({
+      _id: vehicle._id,
+      fertilizerAmount: vehicle.fertilizerAmount 
+    })
+  } catch(err) {
+    return res.status(400).json({
+      message: "Could not update vehicle",
+      error: err
+    });
+  }
+};
+
 const deleteVehicle = async (req, res) => {
   const { id } = req.params;
 
@@ -100,5 +123,6 @@ module.exports = {
   getOneVehicle,
   createVehicle,
   updateVehicle,
-  deleteVehicle
+  deleteVehicle,
+  setIpAddress
 }
