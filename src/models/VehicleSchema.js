@@ -25,6 +25,10 @@ const vehicleSchema = new mongoose.Schema({
   fertilizerAmount: {
     type: Number,
     require: true
+  },
+  ipAddress: {
+    type: String,
+    require: false
   }
 }, { timestamps: true });
 

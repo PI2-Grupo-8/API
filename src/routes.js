@@ -17,6 +17,7 @@ routes.get('/vehicles',loginRequired, VehicleController.getAllVehicles);
 routes.get('/vehicles/owner/:owner',loginRequired, VehicleController.getVehiclesByOwner);
 routes.get('/vehicle/:id',loginRequired, VehicleController.getOneVehicle);
 routes.post('/vehicle/create',loginRequired, VehicleController.createVehicle);
+routes.post('/vehicle/setIp/:code',loginRequired, VehicleController.setIpAddress);
 routes.put('/vehicle/update/:id',loginRequired, VehicleController.updateVehicle);
 routes.delete('/vehicle/delete/:id',loginRequired, VehicleController.deleteVehicle);
 
